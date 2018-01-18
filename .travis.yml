@@ -4,7 +4,7 @@ install:
     - curl -sSL "https://ftp-master.debian.org/keys/archive-key-7.0.asc" | sudo -E apt-key add -
     - sudo bash -c 'echo "deb http://deb.debian.org/debian testing main" >> /etc/apt/sources.list'
     - sudo apt-get update
-    - sudo apt-get install qemu-arm-static -y
+    - sudo apt-get install qemu-user-static -y
 
 script:
     - for i in armhf armel arm64 amd64 i386; do sudo ./build-initrd -a $i; done
