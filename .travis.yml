@@ -1,0 +1,15 @@
+sudo: required
+addons:
+  apt:
+    packages:
+    - qemu-arm-static
+    - qemu-aarch64-static
+    - qemu-user-static
+    - qemu-armeb-static
+
+script:
+    - for i in armhf armel arm64 amd64 i386; do sudo ./build-initrd -a $i; done
+
+after_success:
+    - wget -c https://github.com/probonopd/uploadtool/raw/master/upload.sh
+    - bash upload.sh out/*
