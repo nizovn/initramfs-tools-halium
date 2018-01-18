@@ -1,7 +1,7 @@
 sudo: required
 
 install:
-    - sudo apt-get install qemu-user-static -y
+    - sudo apt-get install qemu-user-static debootstrap -y
 
 script:
     - chmod +x ./build-initrd.sh
