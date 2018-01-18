@@ -1,13 +1,10 @@
 sudo: required
-addons:
-  apt:
-    sources:
-    - debian-sid
 
 install:
-    - sudo apt-get install debian-archive-keyring
+    - curl -sSL "https://ftp-master.debian.org/keys/archive-key-7.0.asc" | sudo -E apt-key add -
+    - sudo echo "deb http://deb.debian.org/debian testing main" >> /etc/apt/sources.list
     - sudo apt-get update
-    - sudo apt-get install qemu-arm-static qemu-aarch64-static qemu-user-static qemu-armeb-static
+    - sudo apt-get install qemu-arm-static qemu-aarch64-static qemu-user-static qemu-armeb-static -y
 
 script:
     - for i in armhf armel arm64 amd64 i386; do sudo ./build-initrd -a $i; done
