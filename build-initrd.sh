@@ -5,7 +5,7 @@ set -e
 export FLASH_KERNEL_SKIP=1
 export DEBIAN_FRONTEND=noninteractive
 DEFAULTMIRROR="https://deb.debian.org/debian"
-APT_COMMAND="apt-get -y"
+APT_COMMAND="apt -y"
 
 usage() {
 	echo "Usage:
@@ -86,7 +86,7 @@ if [ ! -e $ROOT/.min-done ]; then
 
 	# after the switch to systemd we now need to install upstart explicitly
 	echo "nameserver 8.8.8.8" >$ROOT/etc/resolv.conf
-	do_chroot $ROOT "$APT_COMMAND -y update"
+	do_chroot $ROOT "$APT_COMMAND update"
 
 	# We also need to install dpkg-dev in order to use dpkg-architecture.
 	do_chroot $ROOT "$APT_COMMAND install dpkg-dev --no-install-recommends"
@@ -97,8 +97,8 @@ else
 fi
 
 # install all packages we need to roll the generic initrd
-do_chroot $ROOT "$APT_COMMAND -y update"
-do_chroot $ROOT "$APT_COMMAND -y dist-upgrade"
+do_chroot $ROOT "$APT_COMMAND update"
+do_chroot $ROOT "$APT_COMMAND dist-upgrade"
 do_chroot $ROOT "$APT_COMMAND install $INCHROOTPKGS --no-install-recommends"
 DEB_HOST_MULTIARCH=$(chroot $ROOT dpkg-architecture -q DEB_HOST_MULTIARCH)
 
