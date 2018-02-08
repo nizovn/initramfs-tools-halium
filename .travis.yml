@@ -1,7 +1,5 @@
 sudo: required
 
-dist: xenial
-
 install:
     - sudo bash -c "echo deb http://de.archive.ubuntu.com/ubuntu xenial main >> /etc/apt/sources.list"
     - sudo bash -c "echo deb http://de.archive.ubuntu.com/ubuntu xenial universe >> /etc/apt/sources.list"
