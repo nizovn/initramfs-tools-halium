@@ -1,7 +1,7 @@
 sudo: required
 
 install:
-    - echo "deb http://de.archive.ubuntu.com/ubuntu xenial main \ndeb http://de.archive.ubuntu.com/ubuntu xenial universe" |sudo tee -a /etc/apt/sources.list
+    - echo "deb http://de.archive.ubuntu.com/ubuntu xenial main universe" |sudo tee -a /etc/apt/sources.list
     - sudo apt-get update
     - sudo apt-get install qemu-user-static debootstrap -y
 
