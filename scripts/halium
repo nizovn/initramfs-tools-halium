@@ -226,7 +226,7 @@ identify_file_layout() {
 	# = "partition" means the rootfs is located on the device's system partition
 	# and will contain /var/lib/lxc/android/system.img
 	#
-	# = "folder" means the rootfs is located in a folder on the device's userdata partition
+	# = "subdir" means the rootfs is located in a folder on the device's userdata partition
 	# and will contain /var/lib/lxc/android/system.img
 
 	if [ -e /tmpmnt/rootfs.img ]; then
