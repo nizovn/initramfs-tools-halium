@@ -484,16 +484,17 @@ mountroot() {
 	# Mount the android system partition to a temporary location
 	MOUNT="ro"
 	MOUNT_LOCATION="/android-$ANDROID_IMAGE_MODE"
+	[ $ANDROID_IMAGE_MODE = "system" ] && ANDROID_IMAGE="system.img" || ANDROID_IMAGE="android-rootfs.img"
 	[ -e /tmpmnt/.writable_device_image -a -e /halium-system/.writable_device_image ] && MOUNT="rw"
-	tell_kmsg "mounting android system image $MOUNT"
+	tell_kmsg "mounting android system image (/tmpmnt/$ANDROID_IMAGE) $MOUNT"
 	if [ $file_layout = "halium" ]; then
 		# rootfs.img and Android system.img are separate
 		tell_kmsg "mounting android system image from userdata partition"
-		mount -o loop,$MOUNT /tmpmnt/system.img $MOUNT_LOCATION
+		mount -o loop,$MOUNT "/tmpmnt/$ANDROID_IMAGE" $MOUNT_LOCATION
 	else
 		# Android system.img is inside rootfs
 		tell_kmsg "mounting android system image from system rootfs"
-		mount -o loop,$MOUNT /halium-system/var/lib/lxc/android/system.img $MOUNT_LOCATION
+		mount -o loop,$MOUNT "/halium-system/var/lib/lxc/android/$ANDROID_IMAGE" $MOUNT_LOCATION
 	fi
 
 	[ $? -eq 0 ] || tell_kmsg "WARNING: Failed to mount Android system.img."
