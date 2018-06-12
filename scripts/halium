@@ -60,6 +60,20 @@ identify_boot_mode() {
 	tell_kmsg "boot mode: $BOOT_MODE"
 }
 
+identify_android_image() {
+	# Checks for the provided Android image. If it's called system.img, it
+	# should be mounted at Android's /system. If it's called android-rootfs.img,
+	# it should be mounted at Android's /.
+	# Sets $ANDROID_IMAGE_MODE to:
+	#   * "rootfs" if the image should be mounted at '/android/'
+	#   * "system" if the image should be mounted at '/android/system/'
+	#   * "unknown" if neither is found
+
+	[ -f /tmpmnt/system.img ] && ANDROID_IMAGE_MODE="system"
+	[ -f /tmpmnt/android-rootfs.img ] && ANDROID_IMAGE_MODE="rootfs"
+	[ -n $ANDROID_IMAGE_MODE ] && "unknown"
+}
+
 set_halium_version_properties() {
 	halium_system=$1
 	android_data=$2
@@ -425,6 +439,9 @@ mountroot() {
 
 	identify_boot_mode
 	identify_file_layout
+	identify_android_image
+
+	[ $ANDROID_IMAGE_MODE = "unknown" ] && tell_kmsg "WARNING: Android system image not found."
 
 	# If both $imagefile and $_syspart are set, something is wrong. The strange
 	# output from this could be a clue in that situation.
@@ -465,18 +482,18 @@ mountroot() {
 	fi
 
 	# Mount the android system partition to a temporary location
-	mkdir -p /android-system
 	MOUNT="ro"
+	MOUNT_LOCATION="/android-$ANDROID_IMAGE_MODE"
 	[ -e /tmpmnt/.writable_device_image -a -e /halium-system/.writable_device_image ] && MOUNT="rw"
 	tell_kmsg "mounting android system image $MOUNT"
 	if [ $file_layout = "halium" ]; then
 		# rootfs.img and Android system.img are separate
 		tell_kmsg "mounting android system image from userdata partition"
-		mount -o loop,$MOUNT /tmpmnt/system.img /android-system
+		mount -o loop,$MOUNT /tmpmnt/system.img $MOUNT_LOCATION
 	else
 		# Android system.img is inside rootfs
 		tell_kmsg "mounting android system image from system rootfs"
-		mount -o loop,$MOUNT /halium-system/var/lib/lxc/android/system.img /android-system
+		mount -o loop,$MOUNT /halium-system/var/lib/lxc/android/system.img $MOUNT_LOCATION
 	fi
 
 	[ $? -eq 0 ] || tell_kmsg "WARNING: Failed to mount Android system.img."
